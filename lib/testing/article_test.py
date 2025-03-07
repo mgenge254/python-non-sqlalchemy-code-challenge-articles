@@ -24,15 +24,15 @@ class TestArticle:
         magazine = Magazine("Vogue", "Fashion")
         article_1 = Article(author, magazine, "How to wear a tutu with style")
 
-        # comment out the next two lines if using Exceptions
-        article_1.title = 500
-        assert article_1.title == "How to wear a tutu with style"
+        # Test immutability by expecting AttributeError
+        with pytest.raises(AttributeError):
+            article_1.title = 500
         
         assert isinstance(article_1.title, str)
 
-        # uncomment the next two lines if using Exceptions
-        # with pytest.raises(Exception):
-        #     Article(author, magazine, 500)
+        # Test type validation (expects ValueError for non-string)
+        with pytest.raises(ValueError):
+            Article(author, magazine, 500)
 
     def test_title_is_valid(self):
         """title is between 5 and 50 characters inclusive"""
@@ -42,13 +42,13 @@ class TestArticle:
 
         assert 5 <= len(article_1.title) <= 50
 
-        # uncomment the next two lines if using Exceptions
-        # with pytest.raises(Exception):
-        #     Article(author, magazine, "Test")
+        # Test too short (4 chars)
+        with pytest.raises(ValueError):
+            Article(author, magazine, "Test")
 
-        # uncomment the next two lines if using Exceptions
-        # with pytest.raises(Exception):
-        #     Article(author, magazine, "How to wear a tutu with style and walk confidently down the street")
+        # Test too long (51 chars)
+        with pytest.raises(ValueError):
+            Article(author, magazine, "How to wear a tutu with style and walk confidently down")
 
     def test_has_an_author(self):
         """article has an author"""
@@ -104,7 +104,7 @@ class TestArticle:
 
     def test_get_all_articles(self):
         """Article class has all attribute"""
-        Article.all = []
+        Article.all = []  # Reset for test isolation
         author = Author("Carry Bradshaw")
         magazine_1 = Magazine("Vogue", "Fashion")
         magazine_2 = Magazine("AD", "Architecture & Design")
